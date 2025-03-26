@@ -1,5 +1,37 @@
 <?php
 
+use core\SQL\SQL;
+
+function q($sql, $params, $prefixable = false)
+{
+    return SQL::queryAll($sql, $params, $prefixable);
+}
+
+function q1($sql, $params, $prefixable = false)
+{
+    return SQL::queryFirst($sql, $params, $prefixable);
+}
+
+function qi($sql, $params, $prefixable = false)
+{
+    return SQL::queryInsert($sql, $params, $prefixable);
+}
+
+function dq($sql, $params, $prefixable = false)
+{
+    return SQL::debugQuery($sql, $params, $prefixable);
+}
+
+function ddq($sql, $params, $prefixable = false)
+{
+    dd(SQL::debugQuery($sql, $params, $prefixable));
+}
+
+function qInsertId()
+{
+    return SQL::qInsertId();
+}
+
 if (!function_exists('d')) {
     /** Dump.
      * @param mixed $content
@@ -141,7 +173,7 @@ if (!function_exists('unwrap')) {
         }
 
         $arr = mb_str_split(trim($string));
-        if ($arr[0] === $symbol && $arr[count($arr) - 1] === $symbol) {
+        if (isset($arr[0]) && $arr[0] === $symbol && $arr[count($arr) - 1] === $symbol) {
             unset($arr[count($arr) - 1]);
             unset($arr[0]);
         }
@@ -159,5 +191,27 @@ if (!function_exists('asset')) {
     {
         $uri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
         return "https://{$_SERVER['HTTP_HOST']}{$uri}/assets/{$path}";
+    }
+}
+
+if (!function_exists('quotes')) {
+    /** Оборачивает в одинарные кавычки.
+     * @param $data
+     * @return string
+     */
+    function quotes($data): string
+    {
+        return "'" . $data . "'";
+    }
+}
+
+if (!function_exists('spaces')) {
+    /** Оборачивает в пробелы.
+     * @param $data
+     * @return string
+     */
+    function spaces($data): string
+    {
+        return " " . $data . " ";
     }
 }

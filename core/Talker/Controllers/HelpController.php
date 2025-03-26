@@ -12,6 +12,7 @@ class HelpController extends Controller
 {
     public function __invoke(): void
     {
+
         Telegram::deletePreviousMessage();
         Telegram::sendMessage(
             Message::make("👨‍🎓 *{$this->getName('Незнакомец')}*, что бы вы хотели узнать?")->keyboard(
