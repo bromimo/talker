@@ -2,11 +2,8 @@
 
 namespace core\Telegram\Enums;
 
-use App\Traits\Enums\EnumToArray;
-
 enum BackgroundTypeEnum: string
 {
-    use EnumToArray;
 
     case Fill = 'fill';
     case Wallpaper = 'wallpaper';

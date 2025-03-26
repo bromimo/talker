@@ -36,6 +36,7 @@ class Message
     private function __construct(string $text)
     {
         $this->text = $text;
+        $this->parse_mode = ParseModeEnum::Markdown;
     }
 
     public static function make(string $text): self
@@ -50,6 +51,10 @@ class Message
         return $this;
     }
 
+    /** Режим форматирования текста.
+     * @param ParseModeEnum $mode
+     * @return $this
+     */
     public function parseMode(ParseModeEnum $mode): self
     {
         $this->parse_mode = $mode;

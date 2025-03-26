@@ -31,4 +31,9 @@ final class UpdateDto extends DataTransferObject
     public ?ChatJoinRequestDto             $chat_join_request;
     public ?ChatBoostUpdatedDto            $chat_boost;
     public ?ChatBoostRemovedDto            $removed_chat_boost;
+
+    public function isMessage(): bool
+    {
+        return $this->message !== null;
+    }
 }

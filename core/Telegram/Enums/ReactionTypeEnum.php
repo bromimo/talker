@@ -2,11 +2,8 @@
 
 namespace core\Telegram\Enums;
 
-use App\Traits\Enums\EnumToArray;
-
 enum ReactionTypeEnum: string
 {
-    use EnumToArray;
 
     case Emoji = 'emoji';
     case CustomEmoji = 'custom_emoji';

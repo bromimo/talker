@@ -2,12 +2,8 @@
 
 namespace core\Telegram\Enums;
 
-use App\Traits\Enums\EnumToArray;
-
 enum ChatMemberStatusEnum: string
 {
-    use EnumToArray;
-
     case Creator = 'creator';
     case Administrator = 'administrator';
     case Member = 'member';
