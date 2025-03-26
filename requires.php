@@ -13,3 +13,4 @@ spl_autoload_register('autoloadMainClasses');
 
 require_once "vendor/autoload.php";
 require_once "core/Helpers/helpers.php";
+require_once "routes/routes.php";

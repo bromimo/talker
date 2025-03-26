@@ -2,13 +2,19 @@
 
 namespace core\Telegram\Components;
 
+use Exception;
 use core\Telegram\Dto\LoginUrlDto;
 use core\Telegram\Traits\Arrayable;
 use core\Telegram\Dto\WebAppInfoDto;
+use core\Telegram\Dto\CallbackGameDto;
+use core\Telegram\Dto\CopyTextButtonDto;
+use core\Telegram\Dto\SwitchInlineQueryChosenChatDto;
 
 class Button
 {
     use Arrayable;
+
+    const ACTION = 'act';
     
     private string                         $url;
     private string                         $callback_data;
@@ -16,10 +22,10 @@ class Button
     private LoginUrlDto                    $login_url;
     private string                         $switch_inline_query;
     private string                         $switch_inline_query_current_chat;
-//    private SwitchInlineQueryChosenChatDto $switch_inline_query_chosen_chat;
-//    private CopyTextButtonDto              $copy_text;
-//    private CallbackGameDto                $callback_game;
-//    private bool                           $pay;
+    private SwitchInlineQueryChosenChatDto $switch_inline_query_chosen_chat;
+    private CopyTextButtonDto              $copy_text;
+    private CallbackGameDto                $callback_game;
+    private bool                           $pay;
 
     private function __construct(
         private string $text,
@@ -33,10 +39,18 @@ class Button
 
     public function action(string $name): self
     {
-        return $this->param('action', $name);
+        return $this->setParam(self::ACTION, $name);
     }
 
     public function param(string $key, int|string $value): self
+    {
+        if ($key === self::ACTION) {
+            throw new Exception('В ключе параметра нельзя использовать зарезервированное имя ' . self::ACTION);
+        }
+        return $this->setParam($key, $value);
+    }
+
+    private function setParam(string $key, int|string $value): self
     {
         $key = trim($key);
         $value = trim((string) $value);
@@ -71,6 +85,9 @@ class Button
     {
         if (!empty($this->callbackData)) {
             $this->callback_data = implode(';', $this->callbackData);
+            if (strlen($this->callback_data) > 64) {
+                throw new Exception('Callback data должна быть не длиннее 64 байт.');
+            }
         }
 
         return array_filter(

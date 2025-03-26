@@ -149,3 +149,15 @@ if (!function_exists('unwrap')) {
         return implode('', $arr);
     }
 }
+
+if (!function_exists('asset')) {
+    /** Формирует url к указанному файлу в assets.
+     * @param string $path
+     * @return string
+     */
+    function asset(string $path): string
+    {
+        $uri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'], '/'));
+        return "https://{$_SERVER['HTTP_HOST']}{$uri}/assets/{$path}";
+    }
+}

@@ -2,12 +2,8 @@
 
 namespace core\Telegram\Enums;
 
-use App\Traits\Enums\EnumToArray;
-
 enum ChatBootSourceEnum: string
 {
-    use EnumToArray;
-
     case Premium = 'premium';
     case GiftCode = 'gift_code';
     case Giveaway = 'giveaway';

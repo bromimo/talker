@@ -50,6 +50,7 @@ use core\Telegram\Dto\GeneralForumTopicHiddenDto;
 use core\Telegram\Dto\ProximityAlertTriggeredDto;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\Attributes\CastWith;
+use Spatie\DataTransferObject\Casters\ArrayCaster;
 use core\Telegram\Dto\VideoChatParticipantsInvitedDto;
 use core\Telegram\Dto\MessageAutoDeleteTimerChangedDto;
 use core\Telegram\Dto\MessageOrigin\MessageOriginCaster;
@@ -82,6 +83,7 @@ final class MessageDto extends DataTransferObject implements MaybeInaccessibleMe
     public ?string                 $author_signature;
     public ?string                 $text;
     /** @var MessageEntityDto[]|null */
+    #[CastWith(ArrayCaster::class, MessageEntityDto::class)]
     public ?array $entities;
     /** @var LinkPreviewOptionsDto[]|null */
     public ?array            $link_preview_options;
