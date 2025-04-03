@@ -86,6 +86,7 @@ final class MessageDto extends DataTransferObject implements MaybeInaccessibleMe
     #[CastWith(ArrayCaster::class, MessageEntityDto::class)]
     public ?array $entities;
     /** @var LinkPreviewOptionsDto[]|null */
+    #[CastWith(ArrayCaster::class, LinkPreviewOptionsDto::class)]
     public ?array            $link_preview_options;
     public ?string           $effect_id;
     public ?AnimationDto     $animation;
@@ -93,6 +94,7 @@ final class MessageDto extends DataTransferObject implements MaybeInaccessibleMe
     public ?DocumentDto      $document;
     public ?PaidMediaInfoDto $paid_media;
     /** @var PhotoSizeDto[]|null */
+    #[CastWith(ArrayCaster::class, PhotoSizeDto::class)]
     public ?array        $photo;
     public ?StickerDto   $sticker;
     public ?StoryDto     $story;
@@ -101,6 +103,7 @@ final class MessageDto extends DataTransferObject implements MaybeInaccessibleMe
     public ?VoiceDto     $voice;
     public ?string       $caption;
     /** @var MessageEntityDto[]|null */
+    #[CastWith(ArrayCaster::class, MessageEntityDto::class)]
     public ?array       $caption_entities;
     public ?bool        $show_caption_above_media;
     public ?bool        $has_media_spoiler;
@@ -111,45 +114,52 @@ final class MessageDto extends DataTransferObject implements MaybeInaccessibleMe
     public ?VenueDto    $venue;
     public ?LocationDto $location;
     /** @var UserDto[]|null */
+    #[CastWith(ArrayCaster::class, UserDto::class)]
     public ?array   $new_chat_members;
     public ?UserDto $left_chat_member;
     public ?string  $new_chat_title;
     /** @var PhotoSizeDto[]|null */
-    public ?array                             $new_chat_photo;
-    public ?bool                              $delete_chat_photo;
-    public ?bool                              $group_chat_created;
-    public ?bool                              $supergroup_chat_created;
-    public ?bool                              $channel_chat_created;
-    public ?MessageAutoDeleteTimerChangedDto  $message_auto_delete_timer_changed;
-    public ?int                               $migrate_to_chat_id;
-    public ?int                               $migrate_from_chat_id;
+    #[CastWith(ArrayCaster::class, PhotoSizeDto::class)]
+    public ?array $new_chat_photo;
+    public ?bool  $delete_chat_photo;
+    public ?bool  $group_chat_created;
+    public ?bool  $supergroup_chat_created;
+    public ?bool  $channel_chat_created;
+
+    public ?MessageAutoDeleteTimerChangedDto $message_auto_delete_timer_changed;
+
+    public ?int $migrate_to_chat_id;
+    public ?int $migrate_from_chat_id;
+
     #[CastWith(MaybeInnaccessibleMessageCaster::class)]
     public ?MaybeInaccessibleMessageInterface $pinned_message;
-    public ?InvoiceDto                        $invoice;
-    public ?SuccessfulPaymentDto              $successful_payment;
-    public ?RefundedPaymentDto                $refunded_payment;
-    public ?UsersSharedDto                    $users_shared;
-    public ?ChatSharedDto                     $chat_shared;
-    public ?string                            $connected_website;
-    public ?WriteAccessAllowedDto             $write_access_allowed;
-    public ?PassportDataDto                   $passport_data;
-    public ?ProximityAlertTriggeredDto        $proximity_alert_triggered;
-    public ?ChatBoostAddedDto                 $boost_added;
-    public ?ChatBackgroundDto                 $chat_background_set;
-    public ?ForumTopicCreatedDto              $forum_topic_created;
-    public ?ForumTopicEditedDto               $forum_topic_edited;
-    public ?ForumTopicClosedDto               $forum_topic_closed;
-    public ?ForumTopicReopenedDto             $forum_topic_reopened;
-    public ?GeneralForumTopicHiddenDto        $general_forum_topic_hidden;
-    public ?GeneralForumTopicHiddenDto        $general_forum_topic_unhidden;
-    public ?GiveawayCreatedDto                $giveaway_created;
-    public ?GiveawayDto                       $giveaway;
-    public ?GiveawayWinnersDto                $giveaway_winners;
-    public ?GiveawayCompletedDto              $giveaway_completed;
-    public ?VideoChatScheduledDto             $video_chat_scheduled;
-    public ?VideoChatStartedDto               $video_chat_started;
-    public ?VideoChatEndedDto                 $video_chat_ended;
-    public ?VideoChatParticipantsInvitedDto   $video_chat_participants_invited;
-    public ?WebAppDataDto                     $web_app_data;
-    public ?InlineKeyboardMarkupDto           $reply_markup;
+
+    public ?InvoiceDto                 $invoice;
+    public ?SuccessfulPaymentDto       $successful_payment;
+    public ?RefundedPaymentDto         $refunded_payment;
+    public ?UsersSharedDto             $users_shared;
+    public ?ChatSharedDto              $chat_shared;
+    public ?string                     $connected_website;
+    public ?WriteAccessAllowedDto      $write_access_allowed;
+    public ?PassportDataDto            $passport_data;
+    public ?ProximityAlertTriggeredDto $proximity_alert_triggered;
+    public ?ChatBoostAddedDto          $boost_added;
+    public ?ChatBackgroundDto          $chat_background_set;
+    public ?ForumTopicCreatedDto       $forum_topic_created;
+    public ?ForumTopicEditedDto        $forum_topic_edited;
+    public ?ForumTopicClosedDto        $forum_topic_closed;
+    public ?ForumTopicReopenedDto      $forum_topic_reopened;
+    public ?GeneralForumTopicHiddenDto $general_forum_topic_hidden;
+    public ?GeneralForumTopicHiddenDto $general_forum_topic_unhidden;
+    public ?GiveawayCreatedDto         $giveaway_created;
+    public ?GiveawayDto                $giveaway;
+    public ?GiveawayWinnersDto         $giveaway_winners;
+    public ?GiveawayCompletedDto       $giveaway_completed;
+    public ?VideoChatScheduledDto      $video_chat_scheduled;
+    public ?VideoChatStartedDto        $video_chat_started;
+    public ?VideoChatEndedDto          $video_chat_ended;
+
+    public ?VideoChatParticipantsInvitedDto $video_chat_participants_invited;
+    public ?WebAppDataDto                   $web_app_data;
+    public ?InlineKeyboardMarkupDto         $reply_markup;
 }
