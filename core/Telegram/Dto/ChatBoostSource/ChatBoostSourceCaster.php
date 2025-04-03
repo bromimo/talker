@@ -17,7 +17,7 @@ final class ChatBoostSourceCaster implements Caster
             throw new Exception("Invalid chat boost source data");
         }
 
-        return match ($data['source']) {
+        return match (ChatBootSourceEnum::tryFrom($data['source'])) {
             ChatBootSourceEnum::Premium => new ChatBoostSourcePremiumDto(),
             ChatBootSourceEnum::GiftCode => new ChatBoostSourceGiftCodeDto(),
             ChatBootSourceEnum::Giveaway => new ChatBoostSourceGiveawayDto(),

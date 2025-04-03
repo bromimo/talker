@@ -19,7 +19,7 @@ final class BackgroundTypeCaster implements Caster
             throw new Exception("Invalid background type data");
         }
 
-        return match ($data['type']) {
+        return match (BackgroundTypeEnum::tryFrom($data['type'])) {
             BackgroundTypeEnum::Fill => new BackgroundTypeFillDto($data),
             BackgroundTypeEnum::Wallpaper => new BackgroundTypeWallpaperDto($data),
             BackgroundTypeEnum::Pattern => new BackgroundTypePatternDto($data),

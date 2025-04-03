@@ -201,7 +201,7 @@ if (!function_exists('quotes')) {
      */
     function quotes($data): string
     {
-        return "'" . $data . "'";
+        return wrap($data, "'");
     }
 }
 
@@ -212,6 +212,21 @@ if (!function_exists('spaces')) {
      */
     function spaces($data): string
     {
-        return " " . $data . " ";
+        return wrap($data, " ");
+    }
+}
+
+if (!function_exists('wrap')) {
+    /** Оборачивает строку в заданные символы.
+     * @param string      $data
+     * @param string      $pattern
+     * @param string|null $end_pattern
+     * @return string
+     */
+    function wrap(string $data, string $pattern, string $end_pattern = null): string
+    {
+        $end_pattern = $end_pattern ?? $pattern;
+
+        return "{$pattern}{$data}{$end_pattern}";
     }
 }
