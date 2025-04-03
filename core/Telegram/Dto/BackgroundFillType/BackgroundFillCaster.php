@@ -19,7 +19,7 @@ final class BackgroundFillCaster implements Caster
             throw new Exception("Invalid background fill data");
         }
 
-        return match (BackgroundFillTypeEnum::tryFrom($data['type'])) {
+        return match ($data['type']) {
             BackgroundFillTypeEnum::Solid => new BackgroundFillTypeSolidDto($data),
             BackgroundFillTypeEnum::Gradient => new BackgroundFillTypeGradientDto($data),
             BackgroundFillTypeEnum::FreeformGradient => new BackgroundFillTypeFreeformGradientDto($data),

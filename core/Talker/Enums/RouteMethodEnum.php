@@ -8,9 +8,6 @@ enum RouteMethodEnum: string
     case Phrase = 'phrase';
     case Param = 'param';
     case Action = 'action';
-    case BotStatus = 'bot_status';
-    case MemberStatus = 'member_status';
-    case Preg = 'preg';
 
     public function label(): string
     {
@@ -19,9 +16,6 @@ enum RouteMethodEnum: string
             self::Phrase => 'Phrase',
             self::Param => 'Param',
             self::Action => 'Action',
-            self::BotStatus => 'BotStatus',
-            self::MemberStatus => 'MemberStatus',
-            self::Preg => 'Preg',
         };
     }
 }
