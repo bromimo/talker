@@ -15,14 +15,14 @@ class HelpController extends Controller
 
         Telegram::deletePreviousMessage();
         Telegram::sendMessage(
-            Message::make("👨‍🎓 *{$this->getName()}*, что бы вы хотели узнать?")->keyboard(
+            Message::make("👨‍🎓 *{$this->getName('Незнакомец')}*, что бы вы хотели узнать?")->keyboard(
                 Keyboard::make()->buttons([
                     [
                         Button::make('🗺   Как нас найти?')->action('map'),
                         Button::make('🕑   График работы')->action('schedule'),
                     ],
                     [
-                        Button::make('💳   Можно оплатить на карту?')->action('paycard'),
+                        Button::make('💳   Можно оплатить на карту?')->action('cashless'),
                     ],
                     [
                         Button::make('💶   Наши цены')->action('price'),

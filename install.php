@@ -4,11 +4,7 @@ use core\Telegram\Telegram;
 
 require_once "requires.php";
 
-$url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-$url = str_replace("/install.php", "/tg.php", $url);
+$actual_link = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+$actual_link = str_replace("/install.php", "", $actual_link);
 
-try {
-    echo Telegram::setWebhook($url);
-} catch (Exception $e) {
-    echo $e->getMessage();
-}
+Telegram::make(env("TG_BOT_API_KEY"))->getMe()->dd();
