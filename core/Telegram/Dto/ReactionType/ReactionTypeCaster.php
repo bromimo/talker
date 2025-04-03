@@ -19,7 +19,7 @@ final class ReactionTypeCaster implements Caster
             throw new Exception("Invalid type of reaction data");
         }
 
-        return match ($data['type']) {
+        return match (ReactionTypeEnum::tryFrom($data['type'])) {
             ReactionTypeEnum::Emoji => new ReactionTypeEmojiDto($data),
             ReactionTypeEnum::CustomEmoji => new ReactionTypeCustomEmojiDto($data),
             ReactionTypeEnum::Paid => new ReactionTypePaidDto($data),

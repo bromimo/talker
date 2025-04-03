@@ -19,7 +19,7 @@ final class MessageOriginCaster implements Caster
             throw new Exception("Invalid type of message data");
         }
 
-        return match ($data['type']) {
+        return match (MessageOriginTypeEnum::tryFrom($data['type'])) {
             MessageOriginTypeEnum::User => new MessageOriginUserDto($data),
             MessageOriginTypeEnum::HiddenUser => new MessageOriginHiddenUserDto($data),
             MessageOriginTypeEnum::Chat => new MessageOriginChatDto($data),

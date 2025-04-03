@@ -18,7 +18,7 @@ final class ChatMemberCaster implements Caster
             throw new Exception("Invalid chat member status data");
         }
 
-        return match ($data['status']) {
+        return match (ChatMemberStatusEnum::tryFrom($data['status'])) {
             ChatMemberStatusEnum::Creator => new ChatMemberOwnerDto($data),
             ChatMemberStatusEnum::Administrator => new ChatMemberAdministratorDto($data),
             ChatMemberStatusEnum::Member => new ChatMemberMemberDto($data),
