@@ -19,7 +19,7 @@ final class PaidMediaCaster implements Caster
             throw new Exception("Invalid type of paid media data");
         }
 
-        return match (PaidMediaTypeEnum::tryFrom($data['type'])) {
+        return match ($data['type']) {
             PaidMediaTypeEnum::Preview => new PaidMediaPreviewDto($data),
             PaidMediaTypeEnum::Photo => new PaidMediaPhotoDto($data),
             PaidMediaTypeEnum::Video => new PaidMediaVideoDto($data),

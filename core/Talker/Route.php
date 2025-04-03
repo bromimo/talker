@@ -7,23 +7,52 @@ use Exception;
 use ReflectionClass;
 use core\Talker\Dto\RouteDto;
 use core\Abstracts\Singleton;
-use core\Talker\Traits\HasPreg;
+use core\Talker\Dto\CommandDto;
 use core\Telegram\Dto\UpdateDto;
-use core\Talker\Traits\HasAction;
-use core\Talker\Traits\HasPhrase;
-use core\Talker\Traits\HasCommand;
-use core\Talker\Traits\HasBotStatus;
+use core\Telegram\Components\Button;
 use core\Talker\Enums\RouteMethodEnum;
-use core\Talker\Enums\MessageTypeEnum;
-use core\Talker\Traits\HasMemberStatus;
+use core\Telegram\Enums\MessageEntityTypeEnum;
 
 class Route extends Singleton
 {
-    use HasAction, HasBotStatus, HasCommand, HasMemberStatus, HasPhrase, HasPreg;
-
     /** @var RouteDto[] */
     protected static array $routes = [];
     protected static array $stack  = [];
+
+    public static function command(string $name, array|string|callable|null $action = null): void
+    {
+        self::addRoute(RouteMethodEnum::Command, $name, $action);
+    }
+
+    public static function phrase(string $name, array|string|callable|null $action = null): self
+    {
+        self::addRoute(RouteMethodEnum::Phrase, $name, $action);
+
+        return self::getInstance();
+    }
+
+    public static function param(string $name, array|string|null $action = null): void
+    {
+        self::addRoute(RouteMethodEnum::Param, $name, $action);
+    }
+
+    public static function action(string $name, array|string|null $action = null): void
+    {
+        self::addRoute(RouteMethodEnum::Action, $name, $action);
+    }
+
+    public function alias(array $alias): void
+    {
+        if (empty(self::$stack)) {
+            throw new Exception('Алиас можно задать только внутри маршрута.');
+        }
+
+        $parentIndex = array_key_last(self::$stack);
+        if (isset(self::$stack[$parentIndex]['action'])) {
+            $subIndex = array_key_last(self::$stack[$parentIndex]['action']);
+            self::$stack[$parentIndex]['action'][$subIndex]->alias = $alias;
+        }
+    }
 
     private static function addRoute(RouteMethodEnum $method, string $name, array|string|callable|null $action = null): void
     {
@@ -58,41 +87,128 @@ class Route extends Singleton
 
     public static function handle(UpdateDto $data)
     {
-        if ($my_chat_member = self::getMyChatMember($data)) {
-            self::parseMyChatMember(self::$routes, $my_chat_member);
-            exit();
-        }
-        if ($member_status = self::getMemberStatus($data)) {
-            self::parseMemberStatus(self::$routes, $member_status);
-            exit();
-        }
         if ($command = self::getCommand($data)) {
             self::parseCommand(self::$routes, $command);
-            exit();
         }
         if ($callback = self::getCallbackData($data)) {
             self::parseCallbackData(self::$routes, $callback);
-            exit();
         }
         if ($text = self::getText($data)) {
-            self::parsePreg(self::$routes, $text);
             self::parsePhrase(self::$routes, $text);
-            exit();
-        }
-        if (self::isMessage($data)) {
-            self::runController(config('bot.default_controller'));
         }
     }
 
-    private static function isMessage(UpdateDto $data): bool
+    private static function parsePhrase(array $routes, string $text): void
     {
-        foreach (MessageTypeEnum::cases() as $message_type) {
-            if (!is_null($data->{$message_type->value})) {
-                return true;
+        /** @var RouteDto $route */
+        foreach ($routes as $route) {
+            if ($route->method === RouteMethodEnum::Phrase && self::phraseContains($route, $text)) {
+                if (is_string($route->action)) {
+                    self::runController($route->action);
+
+                    return;
+                }
+                if (is_array($route->action)) {
+                    if (self::isControllerAction($route)) {
+                        self::runController(controllerName: $route->action[0], methodName: $route->action[1]);
+
+                        return;
+                    }
+                    self::parsePhrase($route->action, $text);
+
+                    return;
+                }
+            }
+        }
+    }
+
+    private static function phraseContains(RouteDto $route, string $text): bool
+    {
+        if (str_contains($text, $route->name)) {
+            return true;
+        }
+        if ($route->alias) {
+            foreach ($route->alias as $alias) {
+                if (str_contains($text, $alias)) {
+                    return true;
+                }
             }
         }
 
         return false;
+    }
+
+    private static function parseCallbackData(array $routes, string $data): void
+    {
+        $pairs = explode(';', $data);
+        $params = array_reduce($pairs, function ($carry, $item) {
+            [$key, $value] = explode(':', $item, 2);
+            $carry[$key] = $value;
+
+            return $carry;
+        }, []);
+        if (!array_key_exists(Button::ACTION, $params)) {
+            return;
+        }
+        foreach ($routes as $route) {
+            if ($route->method === RouteMethodEnum::Action && $route->name === $params[Button::ACTION]) {
+                if (is_string($route->action)) {
+                    self::runController($route->action, $params);
+
+                    return;
+                }
+                if (is_array($route->action)) {
+                    if (self::isControllerAction($route)) {
+                        self::runController($route->action[0], $params, $route->action[1]);
+
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private static function parseCommand(array $routes, CommandDto $command): void
+    {
+        foreach ($routes as $route) {
+            if ($route->method === RouteMethodEnum::Command && $command->name === $route->name) {
+                if (is_string($route->action)) {
+                    self::runController($route->action, $command->param);
+
+                    return;
+                }
+                if (is_array($route->action)) {
+                    if (self::isControllerAction($route)) {
+                        self::runController($route->action[0], $command->param, $route->action[1]);
+
+                        return;
+                    }
+                    self::parseParam($route->action, $command);
+
+                    return;
+                }
+            }
+        }
+    }
+
+    private static function parseParam(array $routes, CommandDto $command): void
+    {
+        foreach ($routes as $route) {
+            if ($command->param === $route->name) {
+                if (is_string($route->action)) {
+                    self::runController($route->action, $command->param);
+
+                    return;
+                }
+                if (is_array($route->action)) {
+                    if (self::isControllerAction($route)) {
+                        self::runController($route->action[0], $command->param, $route->action[1]);
+
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     private static function isControllerAction(RouteDto $route): bool
@@ -100,7 +216,35 @@ class Route extends Singleton
         return count($route->action) === 2 && is_string($route->action[0]);
     }
 
-    private static function runController(string $controllerName, mixed $param = null, string $methodName = '__invoke')
+    private static function getText(UpdateDto $data): ?string
+    {
+        return $data->message->text ?? null;
+    }
+
+    private static function getCallbackData(UpdateDto $data): ?string
+    {
+        return $data->callback_query->data ?? null;
+    }
+
+    private static function getCommand(UpdateDto $data): CommandDto|false
+    {
+        if (!$data->isMessage() || !$data->message->entities) {
+            return false;
+        }
+        foreach ($data->message->entities as $entity) {
+            if ($entity->type === MessageEntityTypeEnum::BotCommand) {
+                $name = mb_substr($data->message->text, $entity->offset + 1, $entity->length - 1);
+                $param = trim(mb_substr($data->message->text, 0, $entity->offset)
+                    . mb_substr($data->message->text, $entity->offset + $entity->length));
+
+                return new CommandDto(compact('name', 'param'));
+            }
+        }
+
+        return false;
+    }
+
+    private static function runController(string $controllerName, string|array|null $param = null, string $methodName = '__invoke')
     {
         if (!str_contains($controllerName, '\\')) {
             $controllerName = 'core\\Talker\\Controllers\\' . $controllerName;
@@ -112,10 +256,5 @@ class Route extends Singleton
         }
 
         return $controller->$methodName($param);
-    }
-
-    private static function getText(UpdateDto $data): ?string
-    {
-        return $data->message->text ?? null;
     }
 }
